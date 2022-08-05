@@ -241,6 +241,10 @@ pkgs.dockerTools.buildLayeredImageWithNixDb {
 
   contents = [ baseSystem ];
 
+  passthru = {
+    propagatedContents = defaultPkgs;
+  };
+
   extraCommands = ''
     rm -rf nix-support
     ln -s /nix/var/nix/profiles nix/var/nix/gcroots/profiles
