@@ -3,6 +3,7 @@
 , lib ? pkgs.lib
 , name ? "nix"
 , tag ? "latest"
+, bundleNixpkgs ? true
 , channelName ? "nixpkgs"
 , channelURL ? "https://nixos.org/channels/nixpkgs-unstable"
 , extraPkgs ? []
@@ -141,9 +142,11 @@ let
   baseSystem =
     let
       nixpkgs = if builtins.isNull sourceInfo then pkgs.path else sourceInfo;
-      channel = pkgs.runCommandLocal "channel-nixos" { } ''
+      channel = pkgs.runCommandLocal "channel-nixos" { inherit bundleNixpkgs; } ''
         mkdir $out
-        ln -s ${nixpkgs} $out/nixpkgs
+        if [ "$bundleNixpkgs" ]; then
+          ln -s ${nixpkgs} $out/nixpkgs
+        fi
       '';
 
       rootEnv = pkgs.buildPackages.buildEnv {
